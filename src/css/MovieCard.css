@@ -1,0 +1,66 @@
+/* src/components/MovieCard.css */
+.movie-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 16px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  width: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.movie-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.movie-info {
+  padding: 10px 0;
+}
+
+.movie-card h3 {
+  margin: 8px 0;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.movie-card p {
+  margin: 4px 0;
+  color: #666;
+}
+
+.movie-overview {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+.movie-card:hover .movie-overview {
+  max-height: 100px; /* Adjust as needed */
+  opacity: 1;
+  margin-top: 10px; /* Adjust as needed */
+  padding-top: 10px; /* Adjust as needed */
+  padding-bottom: 10px;
+}
+
+.movie-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
