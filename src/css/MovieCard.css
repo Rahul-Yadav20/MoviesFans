@@ -10,7 +10,7 @@
   background-color: rgba(76, 200, 241, 0.1);
   width: 300px;
   overflow: hidden;
-  position: relative;
+  
 }
 
 .movie-card img {
@@ -21,6 +21,7 @@
 
 .movie-info {
   padding: 10px 0;
+  position: relative;
 }
 
 .movie-card h3 {
@@ -35,20 +36,25 @@
 }
 
 .movie-overview {
-  max-height: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  padding: 1rem;
+  text-align: justify;
+  max-height: 100%;
+  transform: translateY(150%);
+  transition: transform 0.3s ease-in;
   overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
-  margin: 0;
-  padding: 0;
 }
 
 .movie-card:hover .movie-overview {
-  max-height: max-content; 
-  opacity: 1;
-  margin-top: 10px; 
-  padding-top: 10px; 
-  padding-bottom: 10px;
+  transform: translateY(0);
+  overflow: auto;
+  scrollbar-width: none;
+  background-color: white;
+  color: aqua;
 }
 
 .movie-card:hover {
