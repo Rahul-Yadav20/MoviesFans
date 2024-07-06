@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import MovieCard from './MovieCard';
+import Loader from './Loader';
 import '../css/MovieList.css';
-import useDebounce from '../hooks/useDebounce ';
+import useDebounce from '../hooks/useDebounce';
 
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
 
@@ -14,18 +15,20 @@ const MovieList = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noMoviesMessage, setNoMoviesMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
 
-  const fetchMovies = useCallback(async (year, genres = [], keyword = '') => {
+  const fetchMovies = useCallback(async (year, genres = [], keyword = '', showLoader = false, setNoMovies = true) => {
+    if (showLoader) setLoading(true);
     const genreString = genres.length > 0 ? `&with_genres=${genres.join(',')}` : '';
     const searchString = keyword ? `&query=${keyword}` : '';
     const url = keyword
       ? `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}${searchString}`
       : `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&vote_count.gte=100&sort_by=popularity.desc${genreString}`;
     const response = await axios.get(url);
-    
-    if (response.data.results.length === 0) {
+
+    if (response.data.results.length === 0 && setNoMovies) {
       setNoMoviesMessage(`No movies present with the selected genre(s) or search keyword.`);
       setMovies(prevMovies => ({
         ...prevMovies,
@@ -47,11 +50,16 @@ const MovieList = () => {
         [year]: moviesWithDetails
       }));
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchMovies(year, selectedGenres, debouncedSearchKeyword);
-  }, [year, selectedGenres, debouncedSearchKeyword, fetchMovies]);
+    fetchMovies(year, selectedGenres, debouncedSearchKeyword, false, false);
+  }, [year]);
+
+  useEffect(() => {
+    fetchMovies(year, selectedGenres, debouncedSearchKeyword, true, true);
+  }, [selectedGenres, debouncedSearchKeyword]);
 
   const handleScroll = (e) => {
     if (e.deltaY > 0 && year < 2024) {
@@ -66,11 +74,18 @@ const MovieList = () => {
     const newSelectedGenres = checked ? [...selectedGenres, value] : selectedGenres.filter(genre => genre !== value);
     setSelectedGenres(newSelectedGenres);
     setMovies({});
-    fetchMovies(year, newSelectedGenres, searchKeyword);
+    fetchMovies(year, newSelectedGenres, searchKeyword, true, true);
   };
 
   const handleSearchChange = (e) => {
     setSearchKeyword(e.target.value);
+  };
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      setMovies({});
+      fetchMovies(year, selectedGenres, searchKeyword, true, true);
+    }
   };
 
   useEffect(() => {
@@ -83,12 +98,14 @@ const MovieList = () => {
 
   return (
     <div className="movie-list" onWheel={handleScroll}>
-      <input 
-        type="text" 
-        placeholder="Search for movies..." 
-        className="search-box" 
+      {loading && <Loader />}
+      <input
+        type="text"
+        placeholder="Search for movies..."
+        className="search-box"
         value={searchKeyword}
         onChange={handleSearchChange}
+        onKeyPress={handleSearchKeyPress}
       />
       <div className="genre-filter">
         {genres.map(genre => (
