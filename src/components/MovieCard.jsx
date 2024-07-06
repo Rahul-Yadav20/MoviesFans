@@ -1,6 +1,6 @@
 // src/components/MovieCard.js
 import React from 'react';
-import './MovieCard.css';
+import '../css/MovieCard.css';
 
 const MovieCard = ({ movie }) => {
   return (
