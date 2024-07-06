@@ -12,9 +12,9 @@ const MovieCard = ({ movie }) => {
           <h3>Overview</h3>
           <p>{movie.overview ? movie.overview:"No Overview is aviable for this movie"}</p>
         </div>
-        <p>Genres: {movie.genres.map(genre => genre.name).join(', ')}</p>
-        <p>Cast: {movie.cast.join(', ')}</p>
-        <p>Director: {movie.director}</p>
+        <p><strong>Genres:</strong> {movie.genres.map(genre => genre.name).join(', ')}</p>
+        <p><strong>Cast:</strong> {movie.cast.join(', ')}</p>
+        <p><strong>Director:</strong> {movie.director}</p>
       </div>
     </div>
   );

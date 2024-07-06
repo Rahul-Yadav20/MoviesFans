@@ -1,4 +1,4 @@
-
+/* Movie Card Style Animation and background color */
 .movie-card {
   border: 1px solid #ccc;
   padding: 16px;
@@ -10,31 +10,36 @@
   background-color: rgba(76, 200, 241, 0.1);
   width: 300px;
   overflow: hidden;
-  
 }
 
+/* Movie Image Style */
 .movie-card img {
   width: 100%;
   height: auto;
   border-radius: 8px;
 }
 
+/* Movie Info Section Style */
 .movie-info {
   padding: 10px 0;
   position: relative;
 }
 
+/* Movie Title Style */
 .movie-card h3 {
   margin: 8px 0;
   font-size: 1.5em;
   color: #333;
+  font-weight: 600;
 }
 
+/* Movie Card Paragraphs Style */
 .movie-card p {
   margin: 4px 0;
   color: #666;
 }
 
+/* Movie Overiew Style on Hidden */
 .movie-overview {
   position: absolute;
   left: 0;
@@ -50,6 +55,7 @@
   overflow: hidden;
 }
 
+/* Movie Overiew Style on Hover */
 .movie-card:hover .movie-overview {
   transform: translateY(0);
   overflow: auto;
@@ -58,16 +64,9 @@
   color: aqua;
 }
 
+/* Card Hover effect */
 .movie-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
