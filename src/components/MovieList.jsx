@@ -4,7 +4,6 @@ import axios from 'axios';
 import MovieCard from './MovieCard';
 import '../css/MovieList.css';
 import useDebounce from '../hooks/useDebounce ';
-import Loader from './Loader'; // Import the Loader component
 
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
 
@@ -15,12 +14,10 @@ const MovieList = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noMoviesMessage, setNoMoviesMessage] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
 
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
 
   const fetchMovies = useCallback(async (year, genres = [], keyword = '') => {
-    setLoading(true); // Set loading to true
     const genreString = genres.length > 0 ? `&with_genres=${genres.join(',')}` : '';
     const searchString = keyword ? `&query=${keyword}` : '';
     const url = keyword
@@ -50,7 +47,6 @@ const MovieList = () => {
         [year]: moviesWithDetails
       }));
     }
-    setLoading(false); // Set loading to false
   }, []);
 
   useEffect(() => {
@@ -77,13 +73,6 @@ const MovieList = () => {
     setSearchKeyword(e.target.value);
   };
 
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      setMovies({});
-      fetchMovies(year, selectedGenres, searchKeyword);
-    }
-  };
-
   useEffect(() => {
     const fetchGenres = async () => {
       const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`);
@@ -100,7 +89,6 @@ const MovieList = () => {
         className="search-box" 
         value={searchKeyword}
         onChange={handleSearchChange}
-        onKeyPress={handleSearchKeyPress}
       />
       <div className="genre-filter">
         {genres.map(genre => (
@@ -110,9 +98,7 @@ const MovieList = () => {
           </div>
         ))}
       </div>
-      {loading ? (
-        <Loader /> // Show the loader when loading
-      ) : noMoviesMessage ? (
+      {noMoviesMessage ? (
         <div className="no-movies-message">{noMoviesMessage}</div>
       ) : (
         Object.keys(movies).sort((a, b) => a - b).map(year => (
