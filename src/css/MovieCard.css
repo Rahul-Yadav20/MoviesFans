@@ -1,4 +1,4 @@
-/* src/components/MovieCard.css */
+
 .movie-card {
   border: 1px solid #ccc;
   padding: 16px;
@@ -40,6 +40,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  top: 10px;
   background-color: #fff;
   padding: 1rem;
   text-align: justify;

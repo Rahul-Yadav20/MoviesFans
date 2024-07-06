@@ -10,7 +10,7 @@ const MovieCard = ({ movie }) => {
         <h3>{movie.title}</h3>
         <div className="movie-overview">
           <h3>Overview</h3>
-          <p>{movie.overview}</p>
+          <p>{movie.overview ? movie.overview:"No Overview is aviable for this movie"}</p>
         </div>
         <p>Genres: {movie.genres.map(genre => genre.name).join(', ')}</p>
         <p>Cast: {movie.cast.join(', ')}</p>
