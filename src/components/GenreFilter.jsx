@@ -1,6 +1,7 @@
 // src/components/GenreFilter.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import "../css/GenreFilter.css"
 
 // Api Key
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
