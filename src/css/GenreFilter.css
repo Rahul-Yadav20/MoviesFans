@@ -1,0 +1,13 @@
+/* src/components/GenreFilter.css */
+
+.genre-filter {
+    margin-bottom: 20px;
+}
+
+.genre-filter div {
+    margin-bottom: 10px;
+}
+
+.genre-filter input[type="checkbox"] {
+    margin-right: 10px;
+}

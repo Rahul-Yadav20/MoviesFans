@@ -10,6 +10,7 @@ import Loader from './Loader';
 import '../css/MovieList.css';
 // importing custom debouncing hook
 import useDebounce from '../hooks/useDebounce';
+import GenreFilter from './GenreFilter';
 
 // defining global veriable for APi Key
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
@@ -18,7 +19,6 @@ const MovieList = () => {
   // All the hooks for defining state variables
   const [movies, setMovies] = useState({});
   const [year, setYear] = useState(2012);
-  const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noMoviesMessage, setNoMoviesMessage] = useState('');
@@ -131,14 +131,12 @@ const MovieList = () => {
   };
 
   // Call the function when genre filters applied
-  const handleGenreChange = async (e) => {
-    // destructure selected genres
-    const { value, checked } = e.target;
-    // hold previous selected genres and add new selected genres if it is there
-    const newSelectedGenres = checked ? [...selectedGenres, value] : selectedGenres.filter(genre => genre !== value);
+  const handleGenreChange = async (genreId, checked) => {
+    const newSelectedGenres = checked
+      ? [...selectedGenres, genreId]
+      : selectedGenres.filter(id => id !== genreId);
     setSelectedGenres(newSelectedGenres);
     setMovies({});
-    // call fetchMovies function using genre filters
     fetchMovies(year, newSelectedGenres, searchKeyword, true, true);
   };
 
@@ -155,15 +153,6 @@ const MovieList = () => {
     }
   };
 
-  // Fetching all genres list here
-  useEffect(() => {
-    const fetchGenres = async () => {
-      // Response of API
-      const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`);
-      setGenres(response.data.genres);
-    };
-    fetchGenres();
-  }, []);
 
 
   return (
@@ -186,15 +175,7 @@ const MovieList = () => {
         onKeyPress={handleSearchKeyPress}
       />
       {/* Genre filters */}
-      <div className="genre-filter">
-        {/* Fetching genre values one by one from genre array (state variable) */}
-        {genres.map(genre => (
-          <div key={genre.id}>
-            <input type="checkbox" id={`genre-${genre.id}`} value={genre.id} onChange={handleGenreChange} />
-            <label htmlFor={`genre-${genre.id}`}>{genre.name}</label>
-          </div>
-        ))}
-      </div>
+      <GenreFilter selectedGenres={selectedGenres} onChange={handleGenreChange} /> {/* Use the GenreFilter component */}
 
       {/* If there is not movie present or noMoviesMessage is true then show message*/}
       {noMoviesMessage ? (
