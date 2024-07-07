@@ -15,7 +15,6 @@ import useDebounce from '../hooks/useDebounce';
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
 
 const MovieList = () => {
-
   // All the hooks for defining state variables
   const [movies, setMovies] = useState({});
   const [year, setYear] = useState(2012);
@@ -24,6 +23,7 @@ const MovieList = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noMoviesMessage, setNoMoviesMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [touchStartY, setTouchStartY] = useState(null);
 
   // Passing search query function to  useDebounce hook and time delay
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
@@ -63,10 +63,9 @@ const MovieList = () => {
 
       // resolve all the promises and store fetched data into the moviesWithDetails variable
       const moviesWithDetails = await Promise.all(response.data.results.slice(0, 8).map(async (movie) => {
+
         // Fetching all movies details one by one by movie id 
         const details = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${API_KEY}&append_to_response=credits`);
-
-        // holding previous state of movie and Storing all details into distinct state variables 
         return {
           ...movie,
           genres: details.data.genres,
@@ -97,13 +96,38 @@ const MovieList = () => {
 
   // Call this function when user scroll
   const handleScroll = (e) => {
-    // for Scrolling up
+
     if (e.deltaY > 0 && year < 2024) {
+      // for Scrolling up
       setYear(prevYear => prevYear + 1);
-    } else if (e.deltaY < 0 && year > 2010) { 
+    } else if (e.deltaY < 0 && year > 2010) {
       // for scrolling down
       setYear(prevYear => prevYear - 1);
     }
+  };
+
+  // Touch event for mobile users
+  const handleTouchStart = (e) => {
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+
+  // Touch Moves Handler
+  const handleTouchMove = (e) => {
+    if (!touchStartY) return;
+
+    const touchEndY = e.touches[0].clientY;
+    const deltaY = touchStartY - touchEndY;
+
+    if (deltaY > 5 && year < 2024) {
+      // Touch down 
+      setYear(prevYear => prevYear + 1);
+    } else if (deltaY < -5 && year > 2010) {
+      //Touch up
+      setYear(prevYear => prevYear - 1);
+    }
+
+    setTouchStartY(null);
   };
 
   // Call the function when genre filters applied
@@ -134,14 +158,21 @@ const MovieList = () => {
   // Fetching all genres list here
   useEffect(() => {
     const fetchGenres = async () => {
+      // Response of API
       const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`);
       setGenres(response.data.genres);
     };
     fetchGenres();
   }, []);
 
+
   return (
-    <div className="movie-list" onWheel={handleScroll}>
+    <div
+      className="movie-list"
+      onWheel={handleScroll}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+    >
       {/* Show Loader if loading is true */}
       {loading && <Loader />}
 
