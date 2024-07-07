@@ -1,3 +1,4 @@
+/*  Genre Styles */
 .genre-filter {
     display: flex;
     flex-wrap: wrap;
@@ -5,14 +6,17 @@
     margin: 20px 0;
 }
 
+/* Margins for buttons */
 .genre-filter div {
     margin: 5px 10px;
 }
 
+/* Margins for labels */
 .genre-filter label {
     margin-left: 5px;
 }
 
+/* Media Query for Responsiveness on medium screen */
 @media (max-width: 768px) {
     .genre-filter div {
         margin: 3px 5px;
@@ -27,6 +31,7 @@
     }
 }
 
+/* Media Query for Responsiveness on small screen */
 @media (max-width: 480px) {
     .genre-filter div {
         margin: 2px 3px;

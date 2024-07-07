@@ -36,55 +36,61 @@ const MovieList = () => {
     // show loader when movies are not loaded
     if (showLoader) setLoading(true);
 
-    // checking genres length to add it with query parameter in APi
-    const genreString = genres.length > 0 ? `&with_genres=${genres.join(',')}` : '';
+    let url = '';
 
-    // checking genres length to add it with query parameter in APi
-    const searchString = keyword ? `&query=${keyword}` : '';
-
-    // initializing url variable based on keyword length
     // store search url if user searching 
     // otherwise fetch all movies based on release year 
-    const url = keyword
-      ? `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}${searchString}`
-      : `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&vote_count.gte=100&sort_by=popularity.desc${genreString}`;
-
-    // fetching movies using axios 
-    const response = await axios.get(url);
-
-    // if there is no movies, Display the message
-    if (response.data.results.length === 0 && setNoMovies) {
-      setNoMoviesMessage(`No movies present with the selected genre(s) or search keyword.`);
-      setMovies(prevMovies => ({
-        ...prevMovies,
-        [year]: [],
-      }));
+    if (keyword) {
+      url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${keyword}&year=${year}`;
     } else {
-      // set message empty if movies are fetched
-      setNoMoviesMessage('');
-
-      // resolve all the promises and store fetched data into the moviesWithDetails variable
-      const moviesWithDetails = await Promise.all(response.data.results.slice(0, 8).map(async (movie) => {
-
-        // Fetching all movies details one by one by movie id 
-        const details = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${API_KEY}&append_to_response=credits`);
-        return {
-          ...movie,
-          genres: details.data.genres,
-          cast: details.data.credits.cast.slice(0, 5).map(member => member.name),
-          director: details.data.credits.crew.find(member => member.job === 'Director')?.name,
-        };
-      }));
-
-      // Storing all movies with their respective year
-      setMovies(prevMovies => ({
-        ...prevMovies,
-        [year]: moviesWithDetails
-      }));
+      const genreString = genres.length > 0 ? `&with_genres=${genres.join(',')}` : '';
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&vote_count.gte=100&sort_by=popularity.desc${genreString}`;
     }
-    // Set loading false when movies loading is finished
+
+    // Error handling
+    try {
+
+      // fetching movies using axios 
+      const response = await axios.get(url);
+
+      // if there is no movies, Display the message
+      if (response.data.results.length === 0 && setNoMovies) {
+        setNoMoviesMessage(`No movies present with the selected genre(s) or search keyword.`);
+        setMovies(prevMovies => ({
+          ...prevMovies,
+          [year]: [],
+        }));
+      } else {
+
+        // set message empty if movies are fetched
+        setNoMoviesMessage('');
+
+        // resolve all the promises and store fetched data into the moviesWithDetails variable
+        const moviesWithDetails = await Promise.all(response.data.results.slice(0, 8).map(async (movie) => {
+
+          // Fetching all movies details one by one by movie id 
+          const details = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${API_KEY}&append_to_response=credits`);
+          return {
+            ...movie,
+            genres: details.data.genres,
+            cast: details.data.credits.cast.slice(0, 5).map(member => member.name),
+            director: details.data.credits.crew.find(member => member.job === 'Director')?.name,
+          };
+        }));
+
+        // Storing all movies with their respective year
+        setMovies(prevMovies => ({
+          ...prevMovies,
+          [year]: moviesWithDetails
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+      setNoMoviesMessage('Error fetching movies. Please try again later.');
+    }
     setLoading(false);
   }, []);
+
 
   // Calling fetchMovies function before rendering based on year dependency
   useEffect(() => {
@@ -97,43 +103,53 @@ const MovieList = () => {
   }, [selectedGenres, debouncedSearchKeyword]);
 
   // Call this function when user scroll
-  const handleScroll = (e) => {
+  const handleScroll = () => {
 
-    if (e.deltaY > 0 && year < 2024) {
-      // for Scrolling up
+    // Destructuring the scrolling properties window document
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    // If user scrolling down
+    if (scrollTop + clientHeight >= scrollHeight - 5 && year < 2024) {
       setYear(prevYear => prevYear + 1);
-    } else if (e.deltaY < 0 && year > 2010) {
-      // for scrolling down
+    }
+    // Scrolling up 
+    else if (scrollTop === 0 && year > 2010) {
       setYear(prevYear => prevYear - 1);
     }
   };
 
-  // Touch event for mobile users
+  // User touch on mobile screen
   const handleTouchStart = (e) => {
     setTouchStartY(e.touches[0].clientY);
   };
 
-
-  // Touch Moves Handler
+  // Touch events on mobile screen
   const handleTouchMove = (e) => {
-    if (!touchStartY) return;
+    if (!touchStartY) return; // If touchStartY is not set, exit early
 
-    const touchEndY = e.touches[0].clientY;
-    const deltaY = touchStartY - touchEndY;
+    const touchEndY = e.touches[0].clientY; // Get the Y coordinate of the touch end
+    const deltaY = touchStartY - touchEndY; // Calculate the difference in Y coordinates
 
-    if (deltaY > 5 && year < 2024) {
-      // Touch down 
-      setYear(prevYear => prevYear + 1);
-    } else if (deltaY < -5 && year > 2010) {
-      //Touch up
-      setYear(prevYear => prevYear - 1);
+    // Check if deltaY (vertical movement) is greater than 5 pixels
+    // and if the user has scrolled to the bottom of the page
+    // and if the year is less than 2024 (to prevent going beyond the available years)
+    if (deltaY > 5 && window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && year < 2024) {
+      setYear(prevYear => prevYear + 1); // Increment the year by 1
+    }
+    // Check if deltaY (vertical movement) is less than -5 pixels
+    // and if the user has scrolled to the top of the page
+    // and if the year is greater than 2010 (to prevent going before 2012)
+    else if (deltaY < -5 && window.scrollY === 0 && year > 2010) {
+      setYear(prevYear => prevYear - 1); // Decrement the year by 1
     }
 
-    setTouchStartY(null);
+    setTouchStartY(null); // Reset touchStartY to null
   };
+
 
   // Call the function when genre filters applied
   const handleGenreChange = async (genreId, checked) => {
+    // Filtering genre based on add or remove genre by user
     const newSelectedGenres = checked
       ? [...selectedGenres, genreId]
       : selectedGenres.filter(id => id !== genreId);
@@ -155,9 +171,20 @@ const MovieList = () => {
     }
   };
 
+  // Scroll top button
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    // Add an event listener for the 'scroll' event when the component mounts
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup function to remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <div
