@@ -108,3 +108,24 @@
   color: #999;
   margin-top: 20px;
 }
+
+/* Top Scoller Button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Hover Effect for Scoller Button */
+.scroll-to-top:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}

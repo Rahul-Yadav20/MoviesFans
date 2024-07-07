@@ -12,6 +12,8 @@ import '../css/MovieList.css';
 import useDebounce from '../hooks/useDebounce';
 import GenreFilter from './GenreFilter';
 
+import { FaArrowUp } from "react-icons/fa6";
+
 // defining global veriable for APi Key
 const API_KEY = '2dca580c2a14b55200e784d157207b4d';
 
@@ -153,7 +155,9 @@ const MovieList = () => {
     }
   };
 
-
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div
@@ -196,6 +200,7 @@ const MovieList = () => {
           )
         ))
       )}
+      <button className="scroll-to-top" onClick={scrollToTop}><FaArrowUp /></button>
     </div>
   );
 };
