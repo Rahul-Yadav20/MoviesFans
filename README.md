@@ -37,6 +37,13 @@ To run the project locally:
 - Scroll up to load movies from previous years.
 - Use genre filters to display movies of selected genres.
 - Enter keywords in the search box to find movies by title.
+
+## Disclaimer
+
+As per my exprience with TMDB api is not working in certain areas, So consider the following points to -
+- TMDB Api is not working properly with Jio Internet. 
+- It is working with Vodafone & Airtel Internet for smooth working.
+- Otherwise, You can use VPN to use this project properly.
   
 ## Credits
 
