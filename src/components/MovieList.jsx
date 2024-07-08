@@ -133,7 +133,7 @@ const MovieList = () => {
     // Check if deltaY (vertical movement) is greater than 5 pixels
     // and if the user has scrolled to the bottom of the page
     // and if the year is less than 2024 (to prevent going beyond the available years)
-    if (deltaY > 5 && window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && year < 2024) {
+    if (deltaY > 5 && window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight && year < 2024) {
       setYear(prevYear => prevYear + 1); // Increment the year by 1
     }
     // Check if deltaY (vertical movement) is less than -5 pixels
