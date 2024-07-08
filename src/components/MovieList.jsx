@@ -11,7 +11,6 @@ import '../css/MovieList.css';
 // importing custom debouncing hook
 import useDebounce from '../hooks/useDebounce';
 import GenreFilter from './GenreFilter';
-
 import { FaArrowUp } from "react-icons/fa6";
 
 // defining global veriable for APi Key
