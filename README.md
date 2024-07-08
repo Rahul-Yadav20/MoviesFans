@@ -40,7 +40,7 @@ To run the project locally:
 
 ## Disclaimer
 
-As per my exprience with TMDB api is not working in certain areas, So consider the following points to -
+As per my exprience with TMDB api is not working in certain areas, So consider the following points before using this project -
 - TMDB Api is not working properly with Jio Internet. 
 - It is working with Vodafone & Airtel Internet for smooth working.
 - Otherwise, You can use VPN to use this project properly.
