@@ -26,6 +26,7 @@ const MovieList = () => {
   const [noMoviesMessage, setNoMoviesMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [touchStartY, setTouchStartY] = useState(null);
+  const [fetchingNext, setFetchingNext] = useState(false);
 
   // Passing search query function to  useDebounce hook and time delay
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
@@ -133,13 +134,16 @@ const MovieList = () => {
     // Check if deltaY (vertical movement) is greater than 5 pixels
     // and if the user has scrolled to the bottom of the page
     // and if the year is less than 2024 (to prevent going beyond the available years)
-    if (deltaY > 5 && window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight && year < 2024) {
+    if (deltaY > 5 && window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight && year < 2024 && !fetchingNext) {
+      setFetchingNext(true);
       setYear(prevYear => prevYear + 1); // Increment the year by 1
     }
+
     // Check if deltaY (vertical movement) is less than -5 pixels
     // and if the user has scrolled to the top of the page
     // and if the year is greater than 2010 (to prevent going before 2012)
-    else if (deltaY < -5 && window.scrollY === 0 && year > 2010) {
+    else if (deltaY < -5 && window.scrollY === 0 && year > 2010 && !fetchingNext) {
+      setFetchingNext(true);
       setYear(prevYear => prevYear - 1); // Decrement the year by 1
     }
 
